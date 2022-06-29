@@ -1,0 +1,79 @@
+<div id="paytrRefundMsg"></div>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <td>{{ entry_refund_transaction }}</td>
+        <td>{{ entry_refund_total }}</td>
+        <td>{{ entry_refund_total_paid }}</td>
+        <td>{{ entry_refund_status }}</td>
+        <td>{{ entry_refund_status_message }}</td>
+        <td>{{ entry_refund_refund }}</td>
+        <td>{{ entry_refund_refund_status }}</td>
+        <td>{{ entry_refund_refund_amount }}</td>
+        <td>{{ entry_refund_refund_date }}</td>
+        <td></td>
+    </tr>
+    </thead>
+    <tbody id="paytrRefundTableBody"></tbody>
+</table>
+
+<script type="text/javascript">
+
+    function loadPaytrTransactionTable() {
+
+        const tableBody = $('#paytrRefundTableBody');
+        const msgBody = $('#paytrRefundMsg');
+        tableBody.html('<tr><td colspan="10" align="center"><img src="{{ paytr_icon_loader }}" width="30" style="margin: 20px 0;"></td></tr>');
+
+        $.ajax({
+            url: 'index.php?route=extension/paytr/payment/paytr_checkout|ajaxTransactions&user_token={{ user_token }}&order_id={{ order_id }}',
+            dataType: 'json',
+            cache: false,
+            success: function (json) {
+
+                if (json.count_msg) {
+                    msgBody.html('<div class="alert alert-warning">' + json.count_msg + '</div>');
+                }
+
+                tableBody.html(json.table);
+            },
+            error: function (json) {
+                tableBody.html(json.responseText);
+            }
+        });
+    }
+
+    function doPaytrRefund(a) {
+        const oid = $(a).attr('data-oid');
+        const amount = $('input[data-oid=' + oid + ']').val();
+
+        $.ajax({
+            url: 'index.php?route=extension/paytr/payment/paytr_checkout|ajaxRefundApi&user_token={{ user_token }}&order_id={{ order_id }}&amount=' + amount + '&moid=' + oid,
+            dataType: 'json',
+            cache: false,
+            beforeSend: function () {
+                $(a).button('loading');
+            },
+            compete: function () {
+                $(a).button('reset');
+            },
+            success: function (json) {
+                if (json.status == 'error') {
+                    alert(json.status_message);
+                    $(a).button('reset');
+                }
+
+                if (json.status == 'success') {
+                    alert(json.status_message);
+                    loadPaytrTransactionTable();
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+    }
+
+    $(window).on('load', loadPaytrTransactionTable());
+
+</script>

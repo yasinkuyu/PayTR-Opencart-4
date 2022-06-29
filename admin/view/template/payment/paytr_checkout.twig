@@ -1,0 +1,349 @@
+{{ header }}
+{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="float-end">
+                <button type="submit" form="form_payment" data-bs-toggle="tooltip" title="{{ button_save }}"
+                        class="btn btn-primary"><i class="fa fa-save"></i></button>
+
+                <a href="{{ cancel }}" data-bs-toggle="tooltip" title="" class="btn btn-light" data-bs-original-title="{{ button_cancel }}" aria-label="{{ button_cancel }}"><i class="fas fa-reply"></i></a>
+            </div>
+            <h1>{{ heading_title }}</h1>
+            <ol class="breadcrumb">
+                {% for breadcrumb in breadcrumbs %}
+                    <li class="breadcrumb-item"><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+                {% endfor %}
+            </ol>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="alert alert-info">
+            <i class="fa fa-exclamation-circle"></i>&nbsp;{{ help_paytr_checkout }}
+        </div>
+    
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-pencil-alt"></i> {{ text_settings }}
+            </div>
+            <div class="card-body">
+                <form action="{{ save }}" method="post" enctype="multipart/form-data" id="form_payment" data-oc-toggle="ajax">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item active"><a href="#tab_api_information"  data-bs-toggle="tab" class="nav-link">{{ text_general }}</a></li>
+                    <li class="nav-item"><a href="#tab_order_status" data-bs-toggle="tab" class="nav-link">{{ text_order_status }}</a></li>
+                    <li class="nav-item"><a href="#tab_module_setting" data-bs-toggle="tab" class="nav-link">{{ text_module_settings }}</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active" id="tab_api_information">
+                        <div class="row mb-3 required">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input-paytr-checkout-merchant-id">{{ entry_merchant_id }}</label>
+                            <div class="col-sm-10">
+                                <div class="input-group">
+                                <span class="input-group-text"></span>
+                                    <input type="text" id="input-paytr-checkout-merchant-id" name="payment_paytr_checkout_merchant_id"
+                                        value="{{ payment_paytr_checkout_merchant_id }}" class="form-control"
+                                        placeholder="{{ entry_merchant_id }}"/>
+                                </div>
+                                <div id="error-paytr-checkout-merchant-id" class="invalid-feedback"></div>
+                            </div>
+
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input-paytr-checkout-merchant-key">{{ entry_merchant_key }}</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="input-paytr-checkout-merchant-key"
+                                        name="payment_paytr_checkout_merchant_key"
+                                        value="{{ payment_paytr_checkout_merchant_key }}" class="form-control"
+                                        placeholder="{{ entry_merchant_key }}"/>
+                                <div id="error-paytr-checkout-merchant-key" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input-paytr-checkout-merchant-salt">{{ entry_merchant_salt }}</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="input-paytr-checkout-merchant-salt"
+                                        name="payment_paytr_checkout_merchant_salt"
+                                        value="{{ payment_paytr_checkout_merchant_salt }}" class="form-control"
+                                        placeholder="{{ entry_merchant_salt }}"/>
+                                <div id="error-paytr-checkout-merchant-salt" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input_language">{{ entry_language }}</label>
+                            <div class="col-sm-10">
+                                <select id="input_language" name="payment_paytr_checkout_lang"
+                                        class="form-control">
+                                    {% for key,k in language_arr %}
+                                        <option value="{{ key }}"
+                                                {% if payment_paytr_checkout_lang == key %}
+                                                    selected="selected"
+                                                {% endif %}
+                                        >{{ k }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="input_total" class="col-sm-2 col-form-label">
+                                    <span data-toggle="tooltip" title="{{ help_total }}">{{ entry_total }}</span></label>
+                            <div class="col-sm-10">
+                                <input type="text" id="input_total"
+                                        name="payment_paytr_checkout_total"
+                                        value="{{ payment_paytr_checkout_total }}" class="form-control"
+                                        placeholder="{{ entry_total }}"/>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="input_module_layout"
+                                    class="col-sm-2 col-form-label">{{ entry_module_layout }}</label>
+                            <div class="col-sm-10">
+                                <select id="input_module_layout" name="payment_paytr_checkout_module_layout"
+                                        class="form-control">
+                                    {% for key,k in module_layout %}
+                                        <option value="{{ key }}"
+                                                {% if payment_paytr_checkout_module_layout == key %}
+                                                    selected="selected"
+                                                {% endif %}
+                                        >{{ k }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input_module_status">{{ entry_status }}</label>
+                            <div class="col-sm-10">
+                                <select id="input_module_status" name="payment_paytr_checkout_status"
+                                        class="form-control">
+                                    {% if payment_paytr_checkout_status==0 %}
+                                        <option value="1">{{ text_enabled }}</option>
+                                        <option value="0" selected="selected">{{ text_disabled }}</option>
+                                    {% else %}
+                                        <option value="1" selected="selected">{{ text_enabled }}</option>
+                                        <option value="0">{{ text_disabled }}</option>
+                                    {% endif %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label for="input_sort_order"
+                                    class="col-sm-2 col-form-label">{{ entry_sort_order }}</label>
+                            <div class="col-sm-10">
+                                <input type="text" id="input_sort_order"
+                                        name="payment_paytr_checkout_sort_order"
+                                        value="{{ payment_paytr_checkout_sort_order }}"
+                                        class="form-control" placeholder="{{ entry_sort_order }}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab_order_status">
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input-paytr-checkout-order_completed-id">{{ entry_payment_complete }}</label>
+                            <div class="col-sm-10">
+                                <select name="payment_paytr_checkout_order_completed_id"
+                                        id="input-paytr-checkout-order_completed-id"
+                                        class="form-control">
+                                    {% if payment_paytr_checkout_order_completed_id == '' %}
+                                        <option value='' selected>{{ text_select }}</option>
+                                    {% endif %}
+                                    {% for order_status in order_statuses %}
+                                        {% if order_status.order_status_id == payment_paytr_checkout_order_completed_id %}
+                                            <option value="{{ order_status.order_status_id }}"
+                                                    selected="selected">{{ order_status.name }}</option>
+                                        {% else %}
+                                            <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                                <div id="error-paytr-checkout-order-completed-id" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input-paytr-checkout-order-canceled-id">{{ entry_payment_failed }}</label>
+                            <div class="col-sm-10">
+                                <select name="payment_paytr_checkout_order_canceled_id"
+                                        id="input-paytr-checkout-order_canceled-id"
+                                        class="form-control">
+                                    {% if payment_paytr_checkout_order_canceled_id == '' %}
+                                        <option value='' selected>{{ text_select }}</option>
+                                    {% endif %}
+                                    {% for order_status in order_statuses %}
+                                        {% if order_status.order_status_id == payment_paytr_checkout_order_canceled_id %}
+                                            <option value="{{ order_status.order_status_id }}"
+                                                    selected="selected">{{ order_status.name }}</option>
+                                        {% else %}
+                                            <option value="{{ order_status.order_status_id }}">{{ order_status.name }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+
+                                <div id="error-paytr-checkout-order-canceled-id" class="invalid-feedback"></div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input_order_notify">{{ entry_notify_status }}</label>
+                            <div class="col-sm-10">
+                                <select name="payment_paytr_checkout_notify" class="form-control"
+                                        id="input_order_notify">
+                                    {% if payment_paytr_checkout_notify == 0 %}
+                                        <option value="0" selected="selected">{{ text_disabled }}</option>
+                                        <option value="1">{{ text_enabled }}</option>
+                                    {% else %}
+                                        <option value="0">{{ text_disabled }}</option>
+                                        <option value="1" selected="selected">{{ text_enabled }}</option>
+                                    {% endif %}
+                                </select>
+                                <span class="help">{{ help_notify }}</span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input_order_ins_total">{{ entry_ins_total }}</label>
+                            <div class="col-sm-10">
+                                <select name="payment_paytr_checkout_ins_total" class="form-control"
+                                        id="input_order_ins_total">
+                                    {% if payment_paytr_checkout_ins_total == 0 %}
+                                        <option value="0" selected="selected">{{ text_disabled }}</option>
+                                        <option value="1">{{ text_enabled }}</option>
+                                        <option value="2">{{ text_ins_total }}</option>
+                                    {% elseif payment_paytr_checkout_ins_total == 1 %}
+                                        <option value="0">{{ text_disabled }}</option>
+                                        <option value="1" selected="selected">{{ text_enabled }}</option>
+                                        <option value="2">{{ text_ins_total }}</option>
+                                    {% else %}
+                                        <option value="0">{{ text_disabled }}</option>
+                                        <option value="1">{{ text_enabled }}</option>
+                                        <option value="2" selected="selected">{{ text_ins_total }}</option>
+                                    {% endif %}
+                                </select>
+                                <span class="help">{{ help_ins_total }}</span>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input_order_total">{{ entry_order_total }}</label>
+                            <div class="col-sm-10">
+                                <select name="payment_paytr_checkout_order_total" class="form-control"
+                                        id="input_order_total">
+                                    {% if payment_paytr_checkout_order_total == 0 %}
+                                        <option value="0" selected="selected">{{ text_disabled }}</option>
+                                        <option value="1">{{ text_enabled }}</option>
+                                    {% else %}
+                                        <option value="0">{{ text_disabled }}</option>
+                                        <option value="1" selected="selected">{{ text_enabled }}</option>
+                                    {% endif %}
+                                </select>
+                                <span class="help">{{ help_order_total }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab_module_setting">
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label"
+                                    for="input_installment_max">{{ entry_max_installments }}</label>
+                            <div class="col-sm-10">
+                                <select id="input_installment_max" name="payment_paytr_checkout_installment_number"
+                                        class="form-control">
+                                    {% for key, k in installment_arr %}
+                                        {% if key==payment_paytr_checkout_installment_number %}
+                                            <option value="{{ key }}" selected="selected">{{ k }}</option>
+                                        {% else %}
+                                            <option value="{{ key }}">{{ k }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div id="categoryBasedArea" class="row" style="border-top: 5px solid #efefef;"></div>
+                    </div>
+                </div>
+                </form>
+
+                <hr>        
+                <em>PayTR Opencart v4 - İnsya Bilişim Teknolojileri - <a href="https://www.insya.com?opencar_paytr=4">insya.com</a><em>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #categoryBasedArea .col-md-3:nth-child(2n) {
+        background: #efefef;
+    }
+</style>
+
+<script type="text/javascript">
+
+    $(document).on('change', '#input_installment_max', function () {
+        ajaxCategoryBased(this.value);
+    });
+
+    $(window).on('load', function () {
+        ajaxCategoryBased($('#input_installment_max').val());
+    });
+
+    function ajaxCategoryBased(val) {
+
+        const body = $('#categoryBasedArea');
+
+        if (val == 13) {
+            $.ajax({
+                url: 'index.php?route=extension/paytr/payment/paytr_checkout|ajaxCategoryBased&user_token={{ user_token }}',
+                dataType: 'json',
+                beforeSend: function () {
+                    body.html('<div style="text-align: center;margin-top: 20px;"><img src="{{ paytr_icon_loader }}" /></div>');
+                },
+                success: function (json) {
+                    let formGroup = '';
+
+                    if (typeof json != "undefined" && json != null) {
+
+                        if (json.result !== false) {
+                            let result = json.result;
+
+                            $.each(json.categories, function (ci, cv) {
+                                formGroup += '<div class="col-md-3"><div class="">';
+                                formGroup += '<label class="control-label">' + cv + '</label>';
+                                formGroup += '<div class=""><select name="payment_paytr_checkout_category_installment[' + ci + ']" class="form-control">';
+
+                                $.each(json.installments, function (ii, iv) {
+                                    formGroup += '<option value="' + ii + '"';
+
+                                    if (result != null) {
+                                        if (result[ci] == ii) {
+                                            formGroup += 'selected="selected"';
+                                        }
+                                    }
+
+                                    formGroup += '>' + iv + '</option>';
+                                });
+
+                                formGroup += '</select></div>';
+                                formGroup += '</div></div>';
+                            });
+                        } else {
+                            alert('An error occurred');
+                        }
+                    }
+
+                    body.html(formGroup);
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                }
+            });
+        } else {
+            body.html('');
+        }
+    }
+
+</script>
+{{ footer }}
